@@ -13,9 +13,11 @@ app.use(cors({
     origin: [process.env.FRONTEND_URL],
     credentials: true
 }));
+app.use(express.urlencoded({ extended: true}))
 
 app.use(cookieParser());
 app.use(morgan('dev'));
+app.use(errorMiddleware);
 
 app.use('/ping', function(req, res ) {
     res.send('/pong')
@@ -25,6 +27,5 @@ app.all('*', (req, res) => {
     res.status(404).send('OPPS! 404 Page Not Found')
 });
 
-app.use(errorMiddleware);
 
 export default app;

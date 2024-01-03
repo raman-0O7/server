@@ -1,7 +1,0 @@
-NODE_ENV=development
-PORT=5005
-MONGO_URI=mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.0.1
-
-JWT_SECRET=SECRET
-JWT_EXPIRY=7d
-
