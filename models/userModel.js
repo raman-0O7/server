@@ -38,8 +38,8 @@ const userSchema = new Schema({
         enum: ['USER', 'ADMIN'],
         default: 'USER'
     },
-    forgetPasswordToken: String,
-    forgetPasswordExpiry: Date
+    forgetPasswordToken: {type: 'String'},
+    forgetPasswordExpiry:{ type: 'String'}
 }, {
     timestamps: true
 });
@@ -66,12 +66,13 @@ userSchema.methods={
         return await bcryptjs.compare(password, this.password)
     },
     generateResetPasswordToken: async function() {
-        const resetToken = crypto.randomByte(20).toString("hex");
-        const encryptedToken = crypto.createHmac("sha256").update(resetToken).digest("hex");
-
+        const resetToken = crypto.randomBytes(20).toString("hex");
+        const encryptedToken = crypto.createHash("sha256", "SECRET").update(resetToken).digest("hex");
+       
         this.forgetPasswordToken = encryptedToken;
-        this.forgetPasswordExpiry = Date.now() = 15 * 60 * 1000;
         
+        this.forgetPasswordExpiry = Date.now() + 15 * 60 * 1000;
+ 
         return resetToken;
     }
 }

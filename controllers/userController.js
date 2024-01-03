@@ -141,6 +141,7 @@ const forgotPassword = async function(req, res, next) {
     }
 
     const resetToken = await user.generateResetPasswordToken();
+    await user.save();
     const resetTokenUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
     const subject = "Reset Password";
@@ -151,6 +152,7 @@ const forgotPassword = async function(req, res, next) {
 
         return res.json({
             message: "Success",
+            resetToken: resetToken,
             result
         })
     } catch(err) {
@@ -164,8 +166,7 @@ const forgotPassword = async function(req, res, next) {
 async function resetPassword(req, res ,next) {
     const { resetToken } = req.params;
     const { password } = req.body;
-
-    const forgetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+    const forgetPasswordToken = crypto.createHash("sha256", "SECRET").update(resetToken).digest("hex");
     const user = await User.findOne({
         forgetPasswordToken,
         forgetPasswordExpiry : { $gt: Date.now()}
@@ -176,8 +177,11 @@ async function resetPassword(req, res ,next) {
     }
 
     user.password = password;
+    user.forgetPasswordExpiry = undefined;
+    user.forgetPasswordToken = undefined;
     await user.save();
     user.password = undefined;
+
     return res.json({
         msg : " Password changed Success"
     });
@@ -209,6 +213,54 @@ async function changePassword(req, res, next) {
     })
 }
 
+async function userUpdate(req, res, next) {
+    const { name } = req.body;
+    const { id } = req.user;
+    console.log(id);
+    let user = undefined;
+    try{
+        user = await User.findOne({_id: id});
+
+    } catch(e) {
+        console.log("Error in db query",e.message)
+    }
+    if(!user) {
+        return next(new AppError("User does not exist", 400));
+    }
+
+    if(name) {
+        user.name = name;
+    }
+    if(req.file) {
+        try{
+            await cloudinary.v2.uploader.destroy(req.user.avatar?.public_id);
+            const result = await cloudinary.v2.uploader.upload(req.file.path, {
+                folder: "lms",
+                width: 250,
+                height: 250,
+                gravity: "faces",
+                crop: "fill"
+            });
+
+            
+            if(result) {
+                user.avatar.public_id = result.public_id;
+                user.avatar.secure_url = result.secure_url;
+
+                fs.rm(`uploads/${req.file.fieldname}`);
+            }
+            
+        } catch(err){
+             return next(new AppError("Something went wrong in file uploading. try again later", 500));
+        }
+    }
+    await user.save();
+    res.status(200).json({
+        success: true,
+        msg: "User details updated successfully"
+    });
+}
+
 export {
     register,
     login,
@@ -217,6 +269,5 @@ export {
     forgotPassword,
     resetPassword,
     changePassword,
-
-
+    userUpdate,
 }
