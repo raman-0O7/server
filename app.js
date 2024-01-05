@@ -6,10 +6,12 @@ import morgan from "morgan";
 import userRoute from './routes/userRoute.js';
 import errorMiddleware from "./middleware/error.middleware.js";
 import courseRoute from './routes/courseRoute.js';
+
+
+
 const app = express();
-
-
 app.use(express.json());
+
 app.use(cors({
   origin: [process.env.FRONTEND_URL],
   credentials: true

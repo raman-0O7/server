@@ -44,7 +44,6 @@ const register = async (req, res, next) => {
                 gravity: "faces",
                 crop: "fill"
             });
-
             
             if(result) {
                 user.avatar.public_id = result.public_id;

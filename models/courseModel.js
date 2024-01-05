@@ -2,7 +2,7 @@ import { model, Schema } from "mongoose";
 
 const courseSchema = new Schema({
   title: {
-    type: String,
+    type: 'String',
     required: [true, "Title is required"],
     minLength: [5, "Title should be more than 5 characters"],
     maxLenght: [50, "Title should be less than 50 characters"]
@@ -15,10 +15,10 @@ const courseSchema = new Schema({
   },
   thumbnail: {
     public_id: {
-      type: String
+      type: String,
     },
     secure_url: {
-      type: String
+      type: String,
     }
   },
   lectures: [
@@ -41,13 +41,16 @@ const courseSchema = new Schema({
     default: 0,
   },
   createdBy: {
-    type: Date,
+    type: String,
     required: true
 
-
-  }
+  },
+  category: {
+    type: String,
+    required: true,
+  },
 
 }, { timestamps: true });
 
-const courseModel = new model("Course", courseSchema);
-export default courseModel;
+const Course = new model("Course", courseSchema);
+export default Course;
