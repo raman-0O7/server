@@ -1,6 +1,7 @@
 import Course from "../models/courseModel.js";
 import AppError from "../utils/error.util.js";
 import cloudinary from "cloudinary";
+import fs from 'fs/promises';
 
 async function getAllCourses(req, res, next) {
     const courses = await Course.find({}).select("-lectures");
@@ -32,7 +33,6 @@ async function getCourseDetails(req, res, next) {
 }
 
 async function createCourse(req, res, next ) {
-    console.log(req.body)
     const { title, description, category, createdBy} = req.body;
 
     if(!title || !description || !createdBy || !category) {
@@ -45,19 +45,15 @@ async function createCourse(req, res, next ) {
         category,
         createdBy,
     });
-    console.log(course);
+
     if(!course) {
         return next(new AppError("Course does not created, please try again" , 500))
     }
-    console.log("reached")
     if(req.file) {
-        console.log("hello");
         try{
-            console.log(req.file);
             const result = await cloudinary.v2.uploader.upload(req.file.path, {
                 folder: "lms",
             });
-            console.log(result);
             if(result) {
                 course.thumbnail.public_id = result.public_id;
                 course.thumbnail.secure_url = result.secure_url;
@@ -71,7 +67,6 @@ async function createCourse(req, res, next ) {
         }
         
     }  
-    console.log("here");
     await course.save();    
     return res.status(201).json({
         success: true,
