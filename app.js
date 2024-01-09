@@ -3,23 +3,21 @@ import express from 'express';
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
+
+const app = express();
+app.use(express.json());
+
+app.use(cors());
+app.use(express.urlencoded({ extended: true }))
+
+app.use(cookieParser());
+app.use(morgan('dev'));
+
 import userRoute from './routes/userRoute.js';
 import errorMiddleware from "./middleware/error.middleware.js";
 import courseRoute from './routes/courseRoute.js';
 
 
-
-const app = express();
-app.use(express.json());
-
-app.use(cors({
-  origin: [process.env.FRONTEND_URL],
-  credentials: true
-}));
-app.use(express.urlencoded({ extended: true }))
-
-app.use(cookieParser());
-app.use(morgan('dev'));
 app.use(errorMiddleware);
 
 app.use('/ping', function(req, res) {

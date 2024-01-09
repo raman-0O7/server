@@ -61,9 +61,8 @@ const register = async (req, res, next) => {
     user.password = undefined;
 
     const token = await user.generateJwtToken();
-    console.log(token);
     res.cookie('token', token)
-    res.status(201).json({
+    return res.status(201).json({
         success: true,
         message: 'User register successfully',
         user
