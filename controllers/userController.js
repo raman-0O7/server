@@ -27,7 +27,7 @@ const register = async (req, res, next) => {
         password,
         avatar: {
             public_id: email,
-            secure_url: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fpngtree.com%2Fso%2Favatar&psig=AOvVaw2Xke-S6Gg6X9XEVouvQjtW&ust=1697472372166000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCNjTsL-3-IEDFQAAAAAdAAAAABAE'
+            secure_url: 'https://w7.pngwing.com/pngs/340/946/png-transparent-avatar-user-computer-icons-software-developer-avatar-child-face-heroes-thumbnail.png'
         }
     });
     if(!user) {
